@@ -1,0 +1,18 @@
+{
+    "26265265": {
+        "dni": 26265265,
+        "nombre": "Miguel",
+        "apellido": "Esperguin",
+        "edad": 25,
+        "saldo": 3500.0,
+        "descubierto": 5000
+    },
+    "24567543": {
+        "dni": 24567543,
+        "nombre": "Jorge",
+        "apellido": "Lucas",
+        "edad": 25,
+        "saldo": 2800.0,
+        "interes": "45 %"
+    }
+}
