@@ -2,74 +2,64 @@ import json
 
 class CuentaBancaria:
         
-        def __init__(self,dni, nombre, apellido,saldo,) :
+        def __init__(self,dni, nombre, apellido, edad, saldo) :
             
-            
+            self.__dni= self.validar_dni(dni)
             self.__nombre= nombre.capitalize()
             self.__apellido=apellido.capitalize()
-            self.__dni= dni
-            self.__saldo= saldo
-            
+            self.__edad= edad
+            self.__saldo= self.validar_saldo(saldo)
+                
         
-        
-        @property
-        def numerocuenta(self):
-
-            return self.__numerocuenta
-        @property
-        def nombre(self):
-            return self.__nombre
-        @property
-        def apellido(self):
-            return self.__apellido
         @property
         def dni(self):
             return self.__dni
+        
+        @property
+        def nombre(self):
+            return self.__nombre
+        
+        @property
+        def apellido(self):
+            return self.__apellido
+        
+        @property
+        def edad(self):
+            return self.__edad
+        
         @property
         def saldo(self):
             return self.__saldo
         
+        
         def __str__(self) :
             return  f"{self.nombre} {self.apellido}"    
         
-        
-        def numerocuenta(self,check_numerocuenta):
-            self.__numerocuenta= self.validar_cuenta(check_numerocuenta),
-    
-        #Valido numero de cuenta
-        def validar_cuenta(self, numerocuenta ):
-            try:
-                    cuentanumero=(numerocuenta)
-
-                    if cuentanumero < 0:
-                        raise ValueError('El número de cuenta debe ser positivo')
-            except ValueError:
-                    raise ValueError("El número de cuenta debe ser positivo")     
+                
             
         #Valido DNI
-        def validar_dni(self, dni):
+        @staticmethod
+        def validar_dni(dni):
             try:
                 dni_num = int(dni)
-                if len(str(dni)) not in [7]:
+                if len(str(dni)) not in [7, 8]:
                     raise ValueError("El DNI debe tener como minimo 7 dígitos.")
                 if dni_num <= 0:
                     raise ValueError("El DNI debe ser un número positivo.")
                 return dni_num
             except ValueError:
-                raise ValueError("El DNI debe ser un número  y  tener como minimo 7 dígitos.")
+                raise ValueError("El DNI debe ser un número y tener como minimo 7 dígitos.")
     
         #Valido Apellido
-        def validar_nombre_apellido(nombre, apellido):
-            
+        @staticmethod
+        def validar_nombre_apellido(nombre, apellido):            
             try:
                 # Eliminamos espacios en blanco y que todo sea en minúsculas
-                nombre = (nombre.strip()).lower()
-                apellido = (apellido.strip()).lower()
-
+                nombre = nombre.strip().lower()
+                apellido = apellido.strip().lower()
                 # Verificar si contienen solo letras
                 if not nombre.isalpha() or not apellido.isalpha():
                     raise ValueError("El nombre y apellido deben contener solo letras.")
-
                 # Verificar si están vacíos
                 if not nombre or not apellido:
                     raise ValueError("El nombre y apellido no pueden estar vacíos.")
@@ -82,30 +72,31 @@ class CuentaBancaria:
         
 
         #Validar Saldo
-        def validar_saldo(self, saldo):
+        @staticmethod
+        def validar_saldo(saldo):
             try:
                 saldo = float(saldo)
                 if saldo < 0:
-                    raise ValueError("El saldo debe ser positivo")
+                    raise ValueError("El saldo debe ser positivo.")
                 return saldo
             except ValueError:
-                raise ValueError("El saldo debe ser un número positivo")
+                raise ValueError("El saldo debe ser un número positivo.")
         
         
         
         def to_dict(self) :
             return{
-                "numerocuenta":self.numerocuenta,
+                 "dni":self.dni,
                 "nombre":self.nombre,
                 "apellido":self.apellido,
-                "dni":self.dni,
+                "edad":self.edad,
                 "saldo":self.saldo                         
             }
         
          
 class CuentaBancariaCorriente(CuentaBancaria):
-    def __init__(self,  nombre, apellido,dni, saldo, descubierto ):
-        super().__init__(dni, nombre, apellido, saldo )        
+    def __init__(self,dni, nombre, apellido, edad, saldo, descubierto ):
+        super().__init__(dni, nombre, apellido,edad, saldo )        
         self.__descubierto = descubierto
 
     @property
@@ -116,16 +107,16 @@ class CuentaBancariaCorriente(CuentaBancaria):
 
     def to_dict(self):
         data = super().to_dict()
-        data["Limite_Descubierto"] = self.__descubierto
+        data["descubierto"] = self.__descubierto
         return data
 
     def __str__(self):
-        return f"{super().__str__()} - Limite Descubierto: {self.__descubierto}"        
+        return f"{super().__str__()} - Descubierto: {self.__descubierto}"        
 
 
 class CuentaBancariaAhorro(CuentaBancaria):    
-    def __init__(self,  nombre, apellido, dni, saldo,intereses_mensuales ):
-        super().__init__( nombre, apellido, dni, saldo)     
+    def __init__(self,dni,nombre, apellido, edad, saldo,intereses_mensuales ):
+        super().__init__( dni, nombre, apellido, edad, saldo)     
         self.__intereses_mensuales = intereses_mensuales
 
     @property
@@ -136,7 +127,7 @@ class CuentaBancariaAhorro(CuentaBancaria):
     
     def to_dict(self):
         data = super().to_dict()
-        data["Intereses_Mensuales"] = self.__intereses_mensuales
+        data["intereses_mensuales"] = self.__intereses_mensuales
         return data
 
     def __str__(self):
@@ -147,7 +138,7 @@ class CuentaBancariaAhorro(CuentaBancaria):
 class GestionCuentaBancaria:
     
     def __init__(self,archivo):
-        self.archivo=archivo 
+        self.archivo = archivo 
     
     def leer_datos(self):
         try:
@@ -170,14 +161,14 @@ class GestionCuentaBancaria:
             print(f'Error inesperado: {error}')    
 
 
-    def crear_cuenta(self, CuentaBancaria):
+    def crear_cuenta(self, cuenta_bancaria):
         try:
             datos = self.leer_datos()
-            dni = CuentaBancaria.dni
-            if not str(dni) in datos.keys():
-                datos[dni] = CuentaBancaria.to_dict()
+            dni = cuenta_bancaria.dni
+            if  not str(dni) in datos.keys():
+                datos[dni] = cuenta_bancaria.to_dict()
                 self.guardar_datos(datos)
-                print(f"Cuenta a nombre de {CuentaBancaria.nombre} {CuentaBancaria.apellido} creado correctamente.")
+                print(f"Cuenta a nombre de {cuenta_bancaria.nombre} {cuenta_bancaria.apellido} creado correctamente.")
             else:
                 print(f"Ya existe colaborador con DNI '{dni}'.")
         except Exception as error:
@@ -188,23 +179,39 @@ class GestionCuentaBancaria:
         try:
             datos = self.leer_datos()
             if dni in datos:
-                CuentaBancaria_data = datos[dni]
-                if 'Descubierto' in CuentaBancaria_data:
-                    CuentaBancaria = CuentaBancariaCorriente(**CuentaBancaria_data)
+                cuenta_data = datos[dni]
+                if 'descubierto' in cuenta_data:
+                    cuentas = CuentaBancariaCorriente(**cuenta_data)
+                    
                 else:
-                    CuentaBancaria = CuentaBancariaAhorro(**CuentaBancaria_data)
-                print(f'Cuenta encontrado con DNI {dni}')
+                    cuentas = CuentaBancariaAhorro(**cuenta_data)                     
+                print(f'Cuenta bancaria encontrada con DNI {dni}') 
             else:
                 print(f'No se encontró ninguna cuenta con DNI {dni}')
 
         except Exception as e:
             print('Error al leer Cuanta Bancaria: {e}')
-
-    def actualizar_Cuenta(self, dni, nuevo_saldo):
+            
+    def leer_todas_las_cuentas(self):
+        try:
+            datos = self.leer_datos()
+            cuenta = {}
+            for dni, cuenta_data in datos.items():
+                if "descubierto" in cuenta_data:
+                    cuenta[dni] = CuentaBancariaCorriente(**cuenta_data)
+                     
+                else:
+                    cuenta[dni] = CuentaBancariaAhorro(**cuenta_data)
+                     
+            return cuenta
+        except Exception as e:
+            print(f'Error al leer todas las cuentas bancarias: {e}')
+            return {}    
+    def actualizar_cuenta(self, dni, nuevo_saldo):
             try:
                 datos = self.leer_datos()
-                if str(dni) in datos.keys():
-                    datos[dni]['saldo'] = nuevo_saldo
+                if str(dni) in datos:
+                    datos[str(dni)]['saldo'] = nuevo_saldo
                     self.guardar_datos(datos)
                     print(f'Salario actualizado para la cuenta  DNI:{dni}')
                 else:
@@ -212,11 +219,12 @@ class GestionCuentaBancaria:
             except Exception as e:
                 print(f'Error al actualizar la cuenta: {e}')
 
+
     def eliminar_cuenta(self, dni):
             try:
                 datos = self.leer_datos()
-                if str(dni) in datos.keys():
-                    del datos[dni]
+                if str(dni) in datos:
+                    del datos[str(dni)]
                     self.guardar_datos(datos)
                     print(f'Cuenta numero:{dni} eliminado correctamente')
                 else:

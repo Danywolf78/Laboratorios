@@ -27,7 +27,7 @@ def mostrar_menu():
     print('7. Salir')
     print('======================================================')
 
-def agregar_Cuenta(gestion, tipo_de_cuenta):
+def agregar_cuenta(gestion, tipo_de_cuenta):
     try:
         dni = input('Ingrese DNI del Titular: ')
         nombre = input('Ingrese nombre del Titular: ')
@@ -36,16 +36,16 @@ def agregar_Cuenta(gestion, tipo_de_cuenta):
         saldo = float(input('Ingrese saldo del Titular: '))
 
         if tipo_de_cuenta == '1':
-            descubierto = float(input('Ingrese maximo descubierto: '))
-            CuentaBancaria = CuentaBancariaCorriente(nombre, apellido, saldo, descubierto)
+            intereses_mensuales = float(input('Ingrese los intereses mensuales de la cuenta: '))
+            cuenta_bancaria =CuentaBancariaAhorro (dni,nombre, apellido,edad, saldo,intereses_mensuales )
         elif tipo_de_cuenta == '2':
-            intereses_mensuales = int(input('Ingrese los intereses mensuales de la cuenta: '))
-            CuentaBancaria = CuentaBancariaAhorro(dni, nombre, apellido, edad, saldo,intereses_mensuales )
+            descubierto = float(input('Ingrese maximo descubierto: '))
+            cuenta_bancaria = CuentaBancariaCorriente(dni, nombre, apellido, edad, saldo,descubierto )
         else:
             print('Opción inválida')
             return
 
-        gestion.crear_cuenta(CuentaBancaria)
+        gestion.crear_cuenta(cuenta_bancaria)
         input('Presione enter para continuar...')
 
     except ValueError as e:
@@ -53,15 +53,16 @@ def agregar_Cuenta(gestion, tipo_de_cuenta):
     except Exception as e:
         print(f'Error inesperado: {e}')
 
-def buscar_colaborador_por_dni(gestion):
+def buscar_cuenta_por_dni(gestion):
     dni = input('Ingrese el DNI del titular de la Cuenta a buscar: ')
     gestion.leer_cuenta(dni)
+    
     input('Presione enter para continuar...')
 
 def actualizar_saldo_cuenta(gestion):
     dni = input('Ingrese el DNI del titular de la Cuenta para actualizar saldo: ')
-    saldo = float(input('Ingrese el saldo de la cuenta'))
-    gestion.actualizar_Cuenta(dni, saldo)
+    saldo = float(input('Ingrese el nuevo saldo de la cuenta : '))
+    gestion.actualizar_cuenta(dni, saldo)
     input('Presione enter para continuar...') 
 
 def eliminar_cuenta(gestion):
@@ -71,17 +72,17 @@ def eliminar_cuenta(gestion):
 
 def mostrar_todas_las_cuentas(gestion):
     print('=============== Listado  de las  Cuentas ==============')
-    for CuentaBancaria in gestion.leer_cuenta().values():
-        if 'descubierto' in CuentaBancaria:
-            print(f"{CuentaBancaria['nombre']} - Descubierto {CuentaBancaria['descubierto']}")
+    for cuentaBancaria in gestion.leer_datos().values():
+        if 'intereses_mensuales' in cuentaBancaria:
+            print(f"{cuentaBancaria['nombre']} - Intereses mensuales {cuentaBancaria['intereses_mensuales']}")
         else:
-            print(f"{CuentaBancaria['nombre']} - Intereses Mensuales {CuentaBancaria['intereses_mensuales']}")
+            print(f"{cuentaBancaria['nombre']} - Descubierto {cuentaBancaria['descubierto']}")
     print('=====================================================================')
-    input('Presione enter para continuar...')    
+    input('Presione enter para continuar...')
 
 if __name__ == "__main__":
-    archivo_colaboradores = 'cuentas.json'
-    gestion = GestionCuentaBancaria(archivo_colaboradores)
+    archivo_cuentas = 'cuenta.json'
+    gestion = GestionCuentaBancaria(archivo_cuentas)
 
     while True:
         limpiar_pantalla()
@@ -89,10 +90,10 @@ if __name__ == "__main__":
         opcion = input('Seleccione una opción: ')
 
         if opcion == '1' or opcion == '2':
-            agregar_Cuenta(gestion, opcion)
+            agregar_cuenta(gestion, opcion)
         
         elif opcion == '3':
-            buscar_colaborador_por_dni(gestion)
+            buscar_cuenta_por_dni(gestion)
 
         elif opcion == '4':
             actualizar_saldo_cuenta(gestion)
@@ -102,7 +103,6 @@ if __name__ == "__main__":
 
         elif opcion == '6':
             mostrar_todas_las_cuentas(gestion)
-
         elif opcion == '7':
             print('Saliendo del programa...')
             break
