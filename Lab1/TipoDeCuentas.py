@@ -123,8 +123,6 @@ class CuentaBancariaAhorro(CuentaBancaria):
     def intereses_mensuales(self):
         return self.__intereses_mensuales    
     
-    
-    
     def to_dict(self):
         data = super().to_dict()
         data["intereses_mensuales"] = self.__intereses_mensuales
