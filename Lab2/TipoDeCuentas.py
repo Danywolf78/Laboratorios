@@ -265,6 +265,9 @@ class GestionCuentaBancaria:
                     print(f'Error al conectar a la base de datos.')
                except Exception as e:
                     print(f'Error al leer Cuenta Bancaria: {e}')
+               finally:
+                   if connection.is_connected():
+                       connection.closed()     
 
         
             
@@ -284,30 +287,71 @@ class GestionCuentaBancaria:
             print(f'Error al leer todas las cuentas bancarias: {e}')
             return {}    
     def actualizar_cuenta(self, dni, nuevo_saldo):
-            try:
-                datos = self.leer_datos()
-                if str(dni) in datos:
-                    datos[str(dni)]['saldo'] = nuevo_saldo
-                    self.guardar_datos(datos)
-                    print(f'Salario actualizado para la cuenta  DNI:{dni}')
-                else:
-                    print(f'No se encontró cuenta con número de DNI:{dni}')
-            except Exception as e:
-                print(f'Error al actualizar la cuenta: {e}')
+        '''Actualizamos el saldo de una cuenta en la base de datos'''
+        try:
+                connection =self.connect()
+                if connection:
+                    with connection.cursor() as cursor:
+                        #Verificamos si el Dni existe
+                        cursor.execute('SELECT * FROM cuentabancaria WHERE dni = %s', (dni, ))
+                        if not cursor.fetchone():
+                            print(f'No existe cuenta asociada al DNI: {dni} ')
+                            return
+                        # Actualizar  saldo
+                        cursor.execute('UPDATE cuenta SET saldo = %s WHERE dni =%s ', (nuevo_saldo, dni))
+                        
+                        
+                        if cursor.rowcount > 0 :
+                            connection.commit()
+                            print(f'Saldo actualizado para la cuenta asociada al DNI: {dni}')
+                        else :
+                            print('No se encontro cuenta asociada al DNI: {dni}}')
+
+        except Exception as e:
+                    print(f'Error al leer Cuenta Bancaria: {e}')
+        finally:
+            if connection.is_connected():
+                connection.closed()                 
 
 
-    def eliminar_cuenta(self, dni):
-            
+
+
+
+
+
+
+
+
+
+
+
+                
+
+    def eliminar_cuenta(self, dni):            
             try:
-                datos = self.leer_datos()
-                if str(dni) in datos:
-                    del datos[str(dni)]
-                    self.guardar_datos(datos)
-                    print(f'Cuenta numero:{dni} eliminado correctamente')
-                else:
-                    print(f'No se encontró cuenta con el siguiente DNI:{dni}')
+                connection =self.connect()
+                if connection:
+                    with connection.cursor() as cursor:
+                        #Se verifica si el DNI esta asociado a una cuenta 
+                        cursor.execute('SELECT * FROM cuentabancaria WHERE dni = %s',(dni,))
+                        if not cursor.fetchone():
+                            print(f'No existe cuenta asciada el DNI: {dni}')
+                            return
+                        #Eliminar cuenta
+                        cursor.execute('DELETE FROM cuentabancariaahorro WHERE dni =%s', {dni,})
+                        cursor.execute('DELETE FROM cuentabancariacorriente WHERE dni =%s', {dni,})
+                        cursor.execute('DELETE FROM cuenta WHERE dni =%s', {dni,})
+                        if cursor.rowcount > 0 :
+                            print(f'Cuenta asociada al DNI: {dni} ha sido eliminada correctamente ')
+                        else:
+                            print('No se encontro cuenta asociada al DNI: {dni}}')
             except Exception as e:
-                print(f'Error al eliminar la cuenta: {e}')            
+                    print(f'Error al leer Cuenta Bancaria: {e}')
+            finally:
+                    if connection.is_connected():
+                        connection.closed()                 
+
+
 
 
 
