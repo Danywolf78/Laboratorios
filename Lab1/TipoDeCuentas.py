@@ -168,9 +168,9 @@ class GestionCuentaBancaria:
                 self.guardar_datos(datos)
                 print(f"Cuenta a nombre de {cuenta_bancaria.nombre} {cuenta_bancaria.apellido} creado correctamente.")
             else:
-                print(f"Ya existe colaborador con DNI '{dni}'.")
+                print(f"Ya existe una cuenta asociada al DNI '{dni}'.")
         except Exception as error:
-            print(f'Error inesperado al crear colaborador: {error}')   
+            print(f'Error inesperado al crear la cuenta: {error}')   
 
 
     def leer_cuenta(self, dni):
@@ -185,10 +185,10 @@ class GestionCuentaBancaria:
                     cuentas = CuentaBancariaAhorro(**cuenta_data)                     
                 print(f'Cuenta bancaria encontrada con DNI {dni}') 
             else:
-                print(f'No se encontró ninguna cuenta con DNI {dni}')
+                print(f'No se encontró ninguna cuenta asociada al DNI {dni}')
 
         except Exception as e:
-            print('Error al leer Cuanta Bancaria: {e}')
+            print('Error al leer Cuenta Bancaria: {e}')
             
     def leer_todas_las_cuentas(self):
         try:
@@ -213,7 +213,7 @@ class GestionCuentaBancaria:
                     self.guardar_datos(datos)
                     print(f'Salario actualizado para la cuenta  DNI:{dni}')
                 else:
-                    print(f'No se encontró cuenta con número de DNI:{dni}')
+                    print(f'No se encontró ninguna cuenta asociada al DNI:{dni}')
             except Exception as e:
                 print(f'Error al actualizar la cuenta: {e}')
 
@@ -224,8 +224,8 @@ class GestionCuentaBancaria:
                 if str(dni) in datos:
                     del datos[str(dni)]
                     self.guardar_datos(datos)
-                    print(f'Cuenta numero:{dni} eliminado correctamente')
+                    print(f'Cuenta asociada al: {dni} eliminada correctamente')
                 else:
-                    print(f'No se encontró cuenta con el siguiente DNI:{dni}')
+                    print(f'No se encontró ninguna cuenta asociada al DNI:{dni}')
             except Exception as e:
                 print(f'Error al eliminar la cuenta: {e}')            
