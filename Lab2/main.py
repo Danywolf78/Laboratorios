@@ -72,11 +72,18 @@ def eliminar_cuenta(gestion):
 
 def mostrar_todas_las_cuentas(gestion):
     print('=============== Listado  de las  Cuentas ==============')
-    for cuentaBancaria in gestion.leer_datos().values():
-        if 'intereses_mensuales' in cuentaBancaria:
-            print(f"{cuentaBancaria['nombre']} - Intereses mensuales {cuentaBancaria['intereses_mensuales']}")
-        else:
-            print(f"{cuentaBancaria['nombre']} - Descubierto {cuentaBancaria['descubierto']}")
+    try:        
+            cuenta_bancaria = gestion.leer_todas_las_cuentas()
+            for cuenta in cuenta_bancaria:
+                if isinstance(cuenta, CuentaBancariaCorriente):
+                    print(f'{cuenta.dni} {cuenta.apellido} {cuenta.nombre} Descubierto:{cuenta.descubierto}')
+                elif isinstance(cuenta, CuentaBancariaAhorro) :
+                    print(f'{cuenta.dni} {cuenta.apellido} {cuenta.nombre} Intereses Mensuales:{cuenta.intereses_mensuales}')
+
+        
+    except Exception as e:
+        print(f'Error al mostrar las cuentas {e}')
+
     print('=====================================================================')
     input('Presione enter para continuar...')
 
