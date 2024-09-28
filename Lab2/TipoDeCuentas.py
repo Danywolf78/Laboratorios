@@ -146,7 +146,7 @@ class GestionCuentaBancaria:
         self.port=  config('DB_PORT')
     
     def connect(self):
-        '''Establece na conexión con la Base de Datos'''    
+        '''Establecer la conexión con la Base de Datos'''    
         try:
             connection = mysql.connector.connect(
                 host=self.host,
@@ -220,7 +220,7 @@ class GestionCuentaBancaria:
                         INSERT INTO cuentabancariaahorro (dni, Intereses_Mensuales )
                         VALUES (%s, %s)
                     '''
-                        print(f"INSERTANDO: DNI={cuenta_bancaria.dni}, Nombre={cuenta_bancaria.nombre}, Descubierto={cuenta_bancaria.intereses_mensuales}")
+                        print(f"INSERTANDO: DNI={cuenta_bancaria.dni}, Nombre={cuenta_bancaria.nombre}, Intereses Mensuales={cuenta_bancaria.intereses_mensuales}")
                         cursor.execute(query, (cuenta_bancaria.dni, cuenta_bancaria.intereses_mensuales))
             
                     connection.commit()
