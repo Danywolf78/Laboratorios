@@ -72,8 +72,8 @@ def actualizar_saldo_cuenta(gestion):
         cuenta = gestion.leer_cuenta(dni)
         if not cuenta:
             raise ValueError(f'No se encontró la cuenta con DNI: {dni}.')
-
-        saldo = float(input('Ingrese el nuevo saldo de la cuenta: '))
+        else:
+         saldo = float(input('Ingrese el nuevo saldo de la cuenta: '))
 
         # Valido saldo
         if saldo < 0:
@@ -81,7 +81,7 @@ def actualizar_saldo_cuenta(gestion):
         else:
 
             gestion.actualizar_cuenta(dni, saldo)
-            print('Saldo actualizado exitosamente.')
+            
         
     except ValueError as e:
         print(f'Error de entrada: {e}')
@@ -89,7 +89,6 @@ def actualizar_saldo_cuenta(gestion):
         print(f'Ocurrió un error al actualizar el saldo de la cuenta: {e}')
     finally:
         input('Presione enter para continuar...')
-
 
 def eliminar_cuenta(gestion):
     dni = input('Ingrese el DNI del titular de la Cuenta a eliminar: ')

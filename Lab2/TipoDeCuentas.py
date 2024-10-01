@@ -232,43 +232,46 @@ class GestionCuentaBancaria:
 
 
     def leer_cuenta(self, dni):
-               try:
-                connection = self.connect()
-                if connection:
-                    with connection.cursor(dictionary=True) as cursor:
-                        cursor.execute('SELECT * FROM cuentabancaria WHERE dni = %s', (dni, ))
-                        cuenta_data = cursor.fetchone()
+      try:
+        connection = self.connect()
+        if connection:
+            with connection.cursor(dictionary=True) as cursor:
+                cursor.execute('SELECT * FROM cuentabancaria WHERE dni = %s', (dni,))
+                cuenta_data = cursor.fetchone()
 
-                        if cuenta_data:
-                            # Normalizar las claves del diccionario para que coincidan con los parámetros esperados
-                            cuenta_data = {k.lower(): v for k, v in cuenta_data.items()}
-                            
-                            cursor.execute('SELECT Intereses_Mensuales FROM cuentabancariaahorro WHERE dni =%s', (dni,))
-                            intereses_mensuales = cursor.fetchone()
+                if cuenta_data:
+                    # Normalizar las claves del diccionario para que coincidan con los parámetros esperados
+                    cuenta_data = {k.lower(): v for k, v in cuenta_data.items()}
+                    
+                    cursor.execute('SELECT Intereses_Mensuales FROM cuentabancariaahorro WHERE dni = %s', (dni,))
+                    intereses_mensuales = cursor.fetchone()
 
-                            if intereses_mensuales and 'intereses_mensuales' in intereses_mensuales:
-                                cuenta_data['intereses_mensuales'] = intereses_mensuales['intereses_mensuales']
-                                cuenta = CuentaBancariaAhorro(**cuenta_data)
-                            else:
-                                cursor.execute('SELECT descubierto FROM cuentabancariacorriente WHERE dni =%s', (dni,))
-                                descubierto = cursor.fetchone()
+                    if intereses_mensuales and 'intereses_mensuales' in intereses_mensuales:
+                        cuenta_data['intereses_mensuales'] = intereses_mensuales['intereses_mensuales']
+                        cuenta = CuentaBancariaAhorro(**cuenta_data)
+                    else:
+                        cursor.execute('SELECT descubierto FROM cuentabancariacorriente WHERE dni = %s', (dni,))
+                        descubierto = cursor.fetchone()
 
-                                if descubierto and 'descubierto' in descubierto:
-                                    cuenta_data['descubierto'] = descubierto['descubierto']
-                                    cuenta = CuentaBancariaCorriente(**cuenta_data)
-                                else:
-                                    cuenta = CuentaBancaria(**cuenta_data)
-                            
-                            print(f'Cuenta encontrada para el DNI: {dni}')
+                        if descubierto and 'descubierto' in descubierto:
+                            cuenta_data['descubierto'] = descubierto['descubierto']
+                            cuenta = CuentaBancariaCorriente(**cuenta_data)
                         else:
-                            print(f'No se encontró la cuenta con DNI: {dni}.')
+                            cuenta = CuentaBancaria(**cuenta_data)
+                            print(f'Cuenta encontrada para el DNI: {dni}')
+                    
+                    return cuenta  # Devolver la cuenta si existe
                 else:
-                    print(f'Error al conectar a la base de datos.')
-               except Exception as e:
-                    print(f'Error al leer Cuenta Bancaria: {e}')
-               finally:
-                   if connection.is_connected():
-                       connection.close()     
+                    return None  # Devolver None si no se encuentra la cuenta
+        else:
+            print('Error al conectar a la base de datos.')
+            return None
+      except Exception as e:
+        print(f'Error al leer Cuenta Bancaria: {e}')
+        return None
+      finally:
+        if connection.is_connected():
+            connection.close()
 
         
             
@@ -301,6 +304,7 @@ class GestionCuentaBancaria:
                             cuenta = CuentaBancariaAhorro(**cuenta_data)
                          else:
                             cuenta = CuentaBancaria(**cuenta_data)
+                            print(f'Cuenta encontrada para el DNI: {dni}')
 
                      cuenta_bancarias.append(cuenta)
 
