@@ -60,10 +60,36 @@ def buscar_cuenta_por_dni(gestion):
     input('Presione enter para continuar...')
 
 def actualizar_saldo_cuenta(gestion):
-    dni = input('Ingrese el DNI del titular de la Cuenta para actualizar saldo: ')
-    saldo = float(input('Ingrese el nuevo saldo de la cuenta : '))
-    gestion.actualizar_cuenta(dni, saldo)
-    input('Presione enter para continuar...') 
+   
+    try:
+        dni = input('Ingrese el DNI del titular de la Cuenta para actualizar saldo: ')
+        
+        # Verifico de que el DNI sea un número
+        if not dni.isdigit():
+            raise ValueError("El DNI ingresado no es válido. Debe ser un número.")
+
+        # Verifico si la cuenta existe antes de continuar
+        cuenta = gestion.leer_cuenta(dni)
+        if not cuenta:
+            raise ValueError(f'No se encontró la cuenta con DNI: {dni}.')
+
+        saldo = float(input('Ingrese el nuevo saldo de la cuenta: '))
+
+        # Valido saldo
+        if saldo < 0:
+            raise ValueError("El saldo debe ser un número positivo.")
+        else:
+
+            gestion.actualizar_cuenta(dni, saldo)
+            print('Saldo actualizado exitosamente.')
+        
+    except ValueError as e:
+        print(f'Error de entrada: {e}')
+    except Exception as e:
+        print(f'Ocurrió un error al actualizar el saldo de la cuenta: {e}')
+    finally:
+        input('Presione enter para continuar...')
+
 
 def eliminar_cuenta(gestion):
     dni = input('Ingrese el DNI del titular de la Cuenta a eliminar: ')
@@ -88,7 +114,6 @@ def mostrar_todas_las_cuentas(gestion):
     input('Presione enter para continuar...')
 
 if __name__ == "__main__":
-    #archivo_cuentas = 'cuenta.json'
     gestion = GestionCuentaBancaria()
 
     while True:

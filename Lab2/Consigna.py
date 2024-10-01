@@ -1,12 +1,10 @@
-"""Apertura: jueves, 25 de julio de 2024, 21:00
-Cierre: lunes, 5 de agosto de 2024, 23:59
-Objetivo:
-Desarrollar un sistema para resolver un desafío específico mediante la creación de repositorios en GitHub que implemente la solución propuesta.
+"""Apertura: martes, 24 de septiembre de 2024, 00:00
+Cierre: martes, 1 de octubre de 2024, 23:59
+Objetivo: Mediante la creación de repositorios en GitHub que implemente la solución propuesta en el laboratorio anterior 
+con persistencia en una base de datos SQL.
 
-
-
-Descripción:
-En este laboratorio, deberás seleccionar y resolver un desafío técnico entre varios propuestos. Cada desafío requerirá la implementación de una solución utilizando python en el paradigma de programación orientada a objetos. Una vez completada la solución, deberás subir el código a un repositorio público en GitHub y proporcionar el enlace correspondiente para su evaluación.
+Descripción: En este laboratorio, deberás implementar la solución utilizando Python en el paradigma de programación orientada a objetos. La persistencia de los datos deberá realizarse en una base de datos SQL. Una vez completada la solución, 
+deberás subir el código a un repositorio público en GitHub y proporcionar el enlace correspondiente para su evaluación.
 
 
 
