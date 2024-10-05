@@ -1,5 +1,5 @@
 """Apertura: martes, 24 de septiembre de 2024, 00:00
-Cierre: martes, 1 de octubre de 2024, 23:59
+Cierre: martes, 6 de octubre de 2024, 23:59
 Objetivo: Mediante la creación de repositorios en GitHub que implemente la solución propuesta en el laboratorio anterior 
 con persistencia en una base de datos SQL.
 
